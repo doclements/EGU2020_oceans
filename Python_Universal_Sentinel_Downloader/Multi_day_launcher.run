@@ -1,0 +1,104 @@
+#!/bin/bash
+
+#Description:    Code to enable launching of Universal_Sentinel_Downloader.py 
+#				         over multiple time slices (e.g. when max rows > 99)
+#Author:         Ben Loveday, Hayley Evers-King (Plymouth Marine Laboratory)
+#Date:           03/2019
+#Version:        v1.0
+#License:        MIT License
+
+#Copyright (c) 2019 EUMETSAT
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+
+#Credits:
+
+#This code was developed for EUMETSAT under contracts for the Copernicus 
+#programme.
+
+#Versions history:
+
+#	- (v1.0) Initialisation
+    
+#Usage:
+
+#    Multi_day_launcher.run <username> <password>
+
+#Options:
+
+#	The user can configure the following options inside the script:
+#	INIT_DATE:			the first date the script will run for (YYY-MM-DD)
+#	NDAYS: 				how many days the script will run for
+#	NHOURS:				the time-step of the script (beware thaat running
+#						with 24 hours with global extents for tiled data
+#						will return more than 99 search results).
+#	CONFIG_TEMPLATE:	the configuration file to use and adapt. The start and
+#						end dates in this should be %START_DATE% and 
+#						%END_DATE%. All other fields are user configurable.
+#	PYTHON_CMD:			Path to your python executable.
+#	RUN_CMD:			The command to run (Universal_Sentinel_Downloader.py).
+
+#Please see README.md for more details. 
+
+#EUMETSAT is interested in hearing about applications that make use of this code.
+#Please consider contacting EUMETSAT via the Copernicus Marine User Forum 
+#(https://forums.eumetsat.int/forums/forum/copernicus-marine-calval/) if you 
+#have comments and/or suggestions for improvements, or wish to tell us about how 
+#we can better support your Sentinel-3 marine work.
+
+#----------------------- USER INPUT ---------------------------------
+username=$1
+password=$2
+INIT_DATE=2019-03-12
+NDAYS=365
+NHOURS=24
+CONFIG_TEMPLATE=Universal_Sentinel_Downloader_S3_template.ini
+PYTHON_CMD="YOU NEED TO PUT THE PATH TO YOUR PYTHON EXECUTABLE HERE>"
+RUN_CMD=Universal_Sentinel_Downloader.py
+#----------------------- END OF USER INPUT --------------------------
+
+#--------------------------------------------------------------------
+#-------------------------- LAUNCH ----------------------------------
+
+HOUR_END=$((24-$NHOURS))
+
+# iterate through days and hours
+for DD in $(seq 0 $NDAYS); do
+  ITER_DATE=$(date +%Y%m%d -d "$INIT_DATE + $DD day")
+  for HH in $(seq -w 0 $NHOURS $HOUR_END); do
+    printf -v HITER "%02d" $((HH+$NHOURS-1))
+    START_DATE=$ITER_DATE'T'$HH'0000'
+    END_DATE=$ITER_DATE'T'$HITER'5959'
+
+    # 'sed' dates into config file
+    sed "s/%START_DATE%/$START_DATE/g" $CONFIG_TEMPLATE > myconfig_tmp.ini
+    sed "s/%END_DATE%/$END_DATE/g" myconfig_tmp.ini > myconfig.ini
+
+    # run this config
+    echo "Running for: "$START_DATE" to "$END_DATE
+    $PYTHON_CMD $RUN_CMD -c myconfig.ini -u $username -p $password
+
+  done
+done
+
+# clear up
+rm -r myconfig_tmp.ini
+rm -r myconfig.ini
+#--------------------------- EOF ------------------------------------
+#--------------------------------------------------------------------

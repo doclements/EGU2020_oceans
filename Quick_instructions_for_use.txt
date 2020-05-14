@@ -1,0 +1,75 @@
+===========================
+Step 1: Code base cloning:
+===========================
+
+To clone the Git code base, please open a terminal/Git Bash for windows users, and run the following commands (skip the lines with # at the start):
+
+# make a new directory:
+mkdir git_reps
+
+# go to that directory
+cd git_reps
+
+# "clone" the code from the Git repository
+https://gitlab.eumetsat.int/eo-lab/ocean.git
+
+# you should now have a folder called "ocean".
+# we are going to make and checkout your own local 'branch' of this code, so that you can track your changes against the downloaded code.
+# To do this run the line below where <YOUR_BRANCH_NAME> should be something sensible that identifies the date, your name, and what 
+# you are doing e.g. 20181121_ben_loveday_training_changes:
+
+# go into the ocean
+cd ocean
+
+# and make a new branch of the code
+git checkout -b <YOUR_BRANCH_NAME>
+
+# Now all the changes you make will be in your new branch, which means we can always 'roll back' to the old version if we make a mistake.
+
+===========================
+Step 2: Getting test data: 
+===========================
+
+To get the test data, you have two options:
+
+Option 1: Windows (if you have Git bash)/Linux/OSx run the install_my_data.run script
+--------------------------------------------------------------
+If you open this code in a text editor (e.g. vi/gedit/notepad) you can see instructions on how to run this code.
+It will automoatically download and install the data for you.
+
+Please note, if you have not added Python to your path (through the non-default option during anaconda install, or adding to your bashrc),
+you will need to do this for this code to work.
+
+Option 2: Windows/Linux/OSx please download the zip files form the following directory:
+--------------------------------------------------------------
+https://drive.google.com/open?id=1rcKBRdf_LtoKdTytYu5Ny102U0teoeZM
+
+You can download this data to anywhere on your system, but please take a note of the path you downloaded it to.
+Once downloaded, you will need to unzip the file.
+
+===========================
+Step 3: Running the test code: 
+===========================
+
+To run the code, we are going to use the Jupyter Notebook training Python training environment. 
+To run this, open a terminal (Linux or OSX) or ANaconda Promt (windows) and type:
+
+Jupyter-notebook
+
+Note: You must make sure that you run Jupyter-notebook from a 'higher' directory level than where you installed the code (instructions above),
+or it will not be able to see it.
+
+Running the above command should open a browser window with the Jupiter environment pre-configured. 
+Once Jupyter notebook has opened in a brower window, you should navigate
+To check if you have all the required modules and data you need to navigate to the following code folder within your cloned Git repository:
+'../../../git_reps/ocean/Configuration_Testing' folder.
+
+Here, you can find, and run the Data_path_checker and Python_Configuration_Tester scripts.
+
+If you follow the instructions in these scripts you can test check if your respective data and code and installed correctly.
+If there are things missing, then these scripts will tell you. 
+
+For this course, you need to make sure that all of the optional modules are also installed (see python installation section of Moodle).
+
+
+ 
